@@ -18,12 +18,13 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.23",
-    "pandas>=2.0", 
+    "pandas>=2.0",
     "xarray>=2023.12.0",
     "netcdf4>=1.6",
     "scipy>=1.10",
     "matplotlib>=3.7",
     "amocatlas @ git+https://github.com/amoccommunity/amocatlas.git",
+    "ipykernel>=6.31.0",
 ]
 
 [project.optional-dependencies]
