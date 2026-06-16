@@ -168,6 +168,7 @@ def plot_time_series(
     ylabel: str = None,
     color: str = "blue",
     label: str = None,
+    linewidth: float=2.0,
     figsize: Tuple[int, int] = (12, 6)
 ) -> Tuple[Any, Any]:
     """Plot a simple time series from an xarray Dataset.
@@ -186,6 +187,8 @@ def plot_time_series(
         Line color. Default is "blue".
     label : str, optional
         Label of the graph.
+    linewidth : floar, optional
+        Width of the graph
     figsize : tuple, optional
         Figure size as (width, height). Default is (12, 6).
 
@@ -197,7 +200,7 @@ def plot_time_series(
     da = ds[var]
     
     fig, ax = plt.subplots(figsize=figsize)
-    ax.plot(ds.TIME, da, color=color, linewidth=1.0,label=label)
+    ax.plot(ds.TIME, da, color=color, linewidth=linewidth,label=label)
     
     # Set title
     if title is None:
