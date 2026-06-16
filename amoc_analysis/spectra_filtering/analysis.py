@@ -39,7 +39,23 @@ def summary_stats(values: np.ndarray) -> dict[str, float]:
 
     TODO (student): implement and return the dictionary.
     """
-    raise NotImplementedError("Return the summary-statistics dictionary.")
+    n = len(values)
+    n_missing = int(np.isnan(values).sum())
+
+    mn  = float(np.nanmin(values))
+    mx  = float(np.nanmax(values))
+
+    return {
+        "n":         n,
+        "n_missing": n_missing,
+        "mean":      float(np.nanmean(values)),
+        "std":       float(np.nanstd(values, ddof=1)),
+        "median":    float(np.nanmedian(values)),
+        "min":       mn,
+        "max":       mx,
+        "range":     mx - mn,
+    }
+    #raise NotImplementedError("Return the summary-statistics dictionary.")
 
 
 def seasonal_cycle(
