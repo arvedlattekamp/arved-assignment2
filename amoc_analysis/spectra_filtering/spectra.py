@@ -96,6 +96,7 @@ def welch_psd(
     segment_length: int,
     overlap: float = 0.5,
     window: str = "hann",
+    confint: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     """Welch (overlapped-segment-averaged) PSD estimate.
 
@@ -113,6 +114,9 @@ def welch_psd(
         Fractional overlap between segments, in ``[0, 1)``. Default 0.5.
     window : str, optional
         Taper applied to each segment. Default ``"hann"``.
+    confint : bool, optional
+        calculates uppper and lower limit with chi2
+
 
     Returns
     -------
@@ -120,6 +124,10 @@ def welch_psd(
         Frequencies in cycles per day.
     psd : numpy.ndarray, shape (segment_length // 2 + 1,)
         Averaged one-sided PSD in ``Sv**2 / (cycles per day)``.
+    lo  : numpy.ndarray
+        lower limit of conmfidence intervall
+    hi  : numpy.ndarray
+        upper limit of confidence interfall
 
     Notes
     -----
@@ -138,8 +146,17 @@ def welch_psd(
         nperseg=nperseg,noverlap=noverlap,
         detrend="linear"
     )
-    return f,psd
-    raise NotImplementedError("Implement Welch overlapped-segment averaging.")
+    if confint:
+        from scipy.stats import chi2 # confidence band
+        step = int(segment_length * (1 - overlap))
+        n_segments=(len(x) - segment_length) // step + 1
+        K = n_segments; dof = 2 * K # ~segments -> d.o.f.
+        lo = dof / chi2.ppf(0.975, dof)
+        hi = dof / chi2.ppf(0.025, dof)
+    if confint:
+        return f, psd, lo, hi
+    return f, psd
+    #raise NotImplementedError("Implement Welch overlapped-segment averaging.")
 
 
 def parseval_ratio(x: np.ndarray, freq: np.ndarray, psd: np.ndarray) -> float:

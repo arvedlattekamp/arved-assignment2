@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy import signal
+import matplotlib.pyplot as plt
 
 
 def tukey_lowpass(
@@ -66,6 +68,27 @@ def nyquist_frequency(dt_days: float) -> float:
     1.0
     """
     return 1.0 / (2.0 * dt_days)
+
+def window_frequency_response(
+        window:int,
+        dt_days: float,
+        filter: str=("boxcar","hann","parzen","tukey")        
+) -> tuple[plt.Figure, plt.Axes]:
+    """ window : int
+        Window length in samples (e.g. 20 for a ~10-day filter on a 12-hour grid).
+
+        dt_days : float
+        Sample spacing in days
+        """
+    fig, ax = plt.subplots()
+    for win in (filter):
+        w = signal.get_window(win, window) 
+    
+        w = w / w.sum()
+        fr, H = signal.freqz(w, worN=8192, fs=1/dt_days)
+        ax.loglog(fr, np.abs(H)**2, label=win)
+    ax.legend()
+    return fig,ax
 
 
 def butterworth_squared_response(
