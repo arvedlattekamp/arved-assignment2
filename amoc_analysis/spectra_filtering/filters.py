@@ -72,7 +72,8 @@ def nyquist_frequency(dt_days: float) -> float:
 def window_frequency_response(
         window:int,
         dt_days: float,
-        filter: str=("boxcar","hann","parzen","tukey")        
+        filter: str=("boxcar","hann","parzen","tukey"),
+        colors: str=("orange","green","red","purple")       
 ) -> tuple[plt.Figure, plt.Axes]:
     """ window : int
         Window length in samples (e.g. 20 for a ~10-day filter on a 12-hour grid).
@@ -81,12 +82,12 @@ def window_frequency_response(
         Sample spacing in days
         """
     fig, ax = plt.subplots()
-    for win in (filter):
+    for i,win in enumerate(filter):
         w = signal.get_window(win, window) 
     
         w = w / w.sum()
         fr, H = signal.freqz(w, worN=8192, fs=1/dt_days)
-        ax.loglog(fr, np.abs(H)**2, label=win)
+        ax.loglog(fr, np.abs(H)**2, label=win, color=colors[i])
     ax.legend()
     return fig,ax
 
