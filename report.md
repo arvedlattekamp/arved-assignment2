@@ -4,7 +4,8 @@ Course: <br>
 Name:<br>
 &emsp;&emsp;Arved Lattekamp<br>
 Dataset:<br>
-&emsp;&emsp;WH41N<br>
+&emsp;&emsp;WH41N<br>Github Repository:<br>
+&emsp;&emsp;[https://github.com/arvedlattekamp/arved-assignment1](https://github.com/arvedlattekamp/arved-assignment1)
 
 ## The Dataset
 The dataset WH41N is an estimate of the Atlantic Meridional Overturning Circulation derived using ARGO and Altimetry observations. The datasets covers monthly data from Jan 2002 until Dec 2025. There are no gaps in the dataset (i.e. all months have a given transport). Therefore the total length of the dataset is 24 yrs times 12 months &rarr; 288 datapoints. Given the fact that each monthly datapoint is a mean over three months, this dataset is oversampled.
