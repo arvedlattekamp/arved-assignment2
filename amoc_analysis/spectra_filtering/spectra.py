@@ -147,10 +147,11 @@ def welch_psd(
         detrend="linear"
     )
     if confint:
-        from scipy.stats import chi2 # confidence band
+        from scipy.stats import chi2  # confidence band
         step = int(segment_length * (1 - overlap))
         n_segments=(len(x) - segment_length) // step + 1
-        K = n_segments; dof = 2 * K # ~segments -> d.o.f.
+        K = n_segments
+        dof = 2 * K # ~segments -> d.o.f.
         lo = dof / chi2.ppf(0.975, dof)
         hi = dof / chi2.ppf(0.025, dof)
     if confint:

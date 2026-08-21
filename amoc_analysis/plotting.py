@@ -143,11 +143,13 @@ def show_attributes(data: Union[str, xr.Dataset]) -> DataFrame:
         print(f"Information is based on file: {data}")
         dataset = xr.open_dataset(data)
         attributes = dataset.attrs.keys()
-        get_attr = lambda key: dataset.attrs[key]
+        def get_attr(key):
+            return dataset.attrs[key]
     elif isinstance(data, xr.Dataset):
         print("Information is based on xarray Dataset")
         attributes = data.attrs.keys()
-        get_attr = lambda key: data.attrs[key]
+        def get_attr(key):
+            return data.attrs[key]
     else:
         raise TypeError("Input data must be a file path (str) or an xarray Dataset")
 
@@ -162,8 +164,8 @@ def show_attributes(data: Union[str, xr.Dataset]) -> DataFrame:
 
 
 def plot_time_series(
-    ds: xr.Dataset, 
-    var: str, 
+    ds: xr.Dataset,
+    var: str,
     title: str = None,
     ylabel: str = None,
     color: str = "blue",
@@ -198,26 +200,56 @@ def plot_time_series(
         Figure and axis objects from matplotlib.
     """
     da = ds[var]
-    
+
     fig, ax = plt.subplots(figsize=figsize)
     ax.plot(ds.TIME, da, color=color, linewidth=linewidth,label=label)
-    
+
     # Set title
     if title is None:
         title = da.attrs.get("long_name", var)
     ax.set_title(title)
-    
+
     # Set ylabel
     if ylabel is None:
         label = da.attrs.get("long_name", var)
         units = da.attrs.get("units", "")
         ylabel = f"{label} [{units}]" if units else label
     ax.set_ylabel(ylabel)
-    
+
     ax.set_xlabel("Time")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    
+
     return fig, ax
+
+
+def plot_trend_with_sigma(ax, t_years, t_datetime, y_raw, y_deseasoned, result, N_raw, title=""):
+    slope = result.slope
+    intercept = result.intercept
+
+    y_fit = slope * t_years + intercept
+
+    ci_lo = y_fit - 1.96 * result.se_eff
+    ci_hi = y_fit + 1.96 * result.se_eff
+
+    sig_honest = "sig." if result.p_eff < 0.05 else "not sig."
+    sig_naive = "sig." if result.p_naive < 0.05 else "not sig."
+
+    ax.plot(t_datetime, y_raw, lw=0.4, c="wheat", alpha=0.8)
+    ax.fill_between(t_datetime, ci_lo, ci_hi, color="grey", alpha=0.6,
+                     label=(f"honest: N*={result.n_eff:.0f} → slope = {result.t_eff:.1f} σ  "
+                            f"(p={result.p_eff:.2g}, '{sig_honest}')"))
+    ax.plot([], [], ls=":", color="orange",
+                label=(f"naive: N={N_raw} → slope = {result.t_naive:.1f} σ  "
+                       f"(p={result.p_naive:.2g}, '{sig_naive}')"))
+    ax.plot(t_datetime, y_fit, color="crimson", lw=2,
+            label=(f"slope {slope:.3f} Sv/yr;  95% CI "
+                   f"[{slope - 1.96*result.se_eff:.3f}, {slope + 1.96*result.se_eff:.3f}]"
+                   f"{' (incl. 0)' if ci_lo[0] < 0 < ci_hi[0] else ''}"))
+
+
+    ax.set_ylabel("Transport (Sv)")
+    ax.set_title(title)
+    ax.legend(loc="upper right", fontsize=8)

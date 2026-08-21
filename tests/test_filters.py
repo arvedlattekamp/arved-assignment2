@@ -2,11 +2,6 @@
 
 from __future__ import annotations
 
-import numpy as np
-import pytest
-
-from amoc_analysis.spectra_filtering.filters import butterworth_squared_response
-
 F_CUT = 0.1  # cycles per day (10-day cutoff)
 
 

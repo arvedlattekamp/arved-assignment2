@@ -5,9 +5,15 @@ netcdf4>=1.6
 scipy>=1.10
 requests
 tk #not implemented in uv
+gsw
 
 # Plotting
 matplotlib>=3.7
 
 # AMOC analysis tools
 git+https://github.com/amoccommunity/amocatlas.git
+
+# testing
+pytest
+pytest-cov     # coverage:  pytest --cov=correlation_trends
+ruff           # formatter (ruff format) + linter (ruff check)

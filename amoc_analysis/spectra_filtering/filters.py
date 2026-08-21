@@ -7,10 +7,10 @@
 
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import signal
-import matplotlib.pyplot as plt
 
 
 def tukey_lowpass(
@@ -73,7 +73,7 @@ def window_frequency_response(
         window:int,
         dt_days: float,
         filter: str=("boxcar","hann","parzen","tukey"),
-        colors: str=("orange","green","red","purple")       
+        colors: str=("orange","green","red","purple")
 ) -> tuple[plt.Figure, plt.Axes]:
     """ window : int
         Window length in samples (e.g. 20 for a ~10-day filter on a 12-hour grid).
@@ -83,8 +83,8 @@ def window_frequency_response(
         """
     fig, ax = plt.subplots()
     for i,win in enumerate(filter):
-        w = signal.get_window(win, window) 
-    
+        w = signal.get_window(win, window)
+
         w = w / w.sum()
         fr, H = signal.freqz(w, worN=8192, fs=1/dt_days)
         ax.loglog(fr, np.abs(H)**2, label=win, color=colors[i])
