@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Tuple, Union
 
 import matplotlib.pyplot as plt
+import numpy as np
 import xarray as xr
 from pandas import DataFrame
 from pandas.io.formats.style import Styler
@@ -231,8 +232,13 @@ def plot_trend_with_sigma(ax, t_years, t_datetime, y_raw, y_deseasoned, result, 
 
     y_fit = slope * t_years + intercept
 
-    ci_lo = y_fit - 1.96 * result.se_eff
-    ci_hi = y_fit + 1.96 * result.se_eff
+    t_center = t_years.mean()
+    half_width = 1.96 * result.se_eff * np.abs(t_years - t_center)
+    ci_lo = y_fit - half_width
+    ci_hi = y_fit + half_width
+
+    # ci_lo = y_fit - 1.96 * result.se_eff
+    # ci_hi = y_fit + 1.96 * result.se_eff
 
     sig_honest = "sig." if result.p_eff < 0.05 else "not sig."
     sig_naive = "sig." if result.p_naive < 0.05 else "not sig."
